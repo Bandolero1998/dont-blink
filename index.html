@@ -1,88 +1,41 @@
 <!doctype html>
-<html lang="sr">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#090b16">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="DON'T BLINK">
-<title>DON'T BLINK</title>
+<html lang="sr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="theme-color" content="#080b12"><meta name="apple-mobile-web-app-capable" content="yes"><title>NEON HEIST</title>
 <style>
-:root{color-scheme:dark;--bg:#090b16;--panel:#13172a;--cyan:#64f5e5;--pink:#ff557d;--gold:#ffd36a}
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:Inter,system-ui,-apple-system,sans-serif;touch-action:none;color:#fff}
-body{display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 30%,#1a2140 0%,#090b16 68%)}
-#game{position:relative;width:100%;height:100%;max-width:520px;max-height:940px;overflow:hidden;background:linear-gradient(180deg,#111831,#090b16);isolation:isolate}
-canvas{width:100%;height:100%;display:block;touch-action:none}
-.hud{position:absolute;inset:0;pointer-events:none;padding:calc(env(safe-area-inset-top) + 18px) 20px calc(env(safe-area-inset-bottom) + 18px)}
-.top{display:flex;justify-content:space-between;align-items:flex-start}.brand{font-size:12px;letter-spacing:4px;color:#a7b2d7;font-weight:800}.score{font-size:38px;font-weight:900;line-height:1.1;text-align:right;text-shadow:0 0 24px #64f5e555}.best{font-size:11px;color:#9da8c8;letter-spacing:1px;text-align:right;margin-top:4px}
-.status{position:absolute;top:22%;left:0;right:0;text-align:center;font-size:12px;letter-spacing:3px;color:#a9b5d8;font-weight:800}
-.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:28px;background:#070914a8;backdrop-filter:blur(8px)}
-.panel{width:min(100%,360px);padding:30px 24px;border:1px solid #ffffff20;border-radius:28px;background:linear-gradient(145deg,#1b2340f2,#101426f5);box-shadow:0 24px 80px #0009;text-align:center}
-.eyebrow{font-size:10px;letter-spacing:4px;color:var(--cyan);font-weight:900}.title{font-size:43px;line-height:.95;letter-spacing:-2px;font-weight:1000;margin:14px 0 12px}.title span{color:var(--cyan)}.desc{color:#aeb8d5;font-size:14px;line-height:1.55;margin:0 auto 24px;max-width:270px}
-button{border:0;border-radius:16px;background:var(--cyan);color:#08111b;font-weight:1000;letter-spacing:1.5px;font-size:14px;padding:17px 24px;width:100%;cursor:pointer;box-shadow:0 8px 30px #64f5e533}
-.hint{font-size:11px;color:#7e89aa;margin-top:17px;line-height:1.5}
-.hidden{display:none!important}.touchhint{position:absolute;bottom:calc(env(safe-area-inset-bottom) + 34px);left:0;right:0;text-align:center;color:#8794b9;font-size:11px;letter-spacing:2px;font-weight:800;pointer-events:none}
-#sound{position:absolute;right:18px;top:calc(env(safe-area-inset-top) + 70px);pointer-events:auto;width:42px;height:42px;border-radius:50%;padding:0;background:#ffffff12;color:#dce6ff;border:1px solid #ffffff20;font-size:17px;box-shadow:none}
-</style>
-</head>
-<body>
-<div id="game">
-<canvas id="c"></canvas>
-<div class="hud"><div class="top"><div class="brand">ARCADE / 001</div><div><div class="score" id="score">0</div><div class="best">BEST <span id="best">0</span></div></div></div></div>
-<button id="sound" aria-label="Zvuk">♫</button>
-<div class="status" id="status">DRŽI DA TREPNEŠ</div>
-<div class="touchhint" id="touchhint">DRŽI EKRAN DA ZATVORIŠ OKO</div>
-<div class="overlay" id="start">
-<div class="panel"><div class="eyebrow">JEDAN PRST. JEDNA ŠANSA.</div><div class="title">DON'T<br><span>BLINK.</span></div><p class="desc">Drži prst da zatvoriš oko i prođeš kroz crvene lasere. Pusti da otvoriš oko i pokupiš zvezde. Koliko daleko možeš?</p><button id="play">IGRAJ</button><div class="hint">Igra radi offline · Rekord se čuva na ovom uređaju</div></div>
-</div>
-<div class="overlay hidden" id="over">
-<div class="panel"><div class="eyebrow">KRAJ RUNDE</div><div class="title" id="endtitle">DOBRO<br><span>ODIGRANO.</span></div><p class="desc">Tvoj rezultat: <b id="final">0</b><br>Najbolji rezultat: <b id="record">0</b></p><button id="again">IGRAJ PONOVO</button><div class="hint">Pokušaj ponovo — možeš bolje.</div></div>
-</div>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#080b12;color:#fff;font-family:Inter,system-ui,-apple-system,sans-serif;touch-action:none}#app{position:relative;width:100%;height:100%;max-width:520px;margin:auto;background:#090e18;overflow:hidden}canvas{width:100%;height:100%;display:block}.hud{position:absolute;inset:0;pointer-events:none;padding:calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 16px)}.top{display:flex;justify-content:space-between;align-items:flex-start}.logo{font-size:12px;letter-spacing:3px;font-weight:1000;color:#8fffe0}.score{font-size:34px;font-weight:1000;line-height:1;text-align:right;text-shadow:0 0 20px #ff3d8066}.small{font-size:10px;letter-spacing:1.5px;color:#9ba9bc;margin-top:5px;text-align:right}.heat{position:absolute;top:calc(env(safe-area-inset-top) + 75px);left:16px;right:16px;height:5px;border-radius:10px;background:#ffffff18;overflow:hidden}.heat>i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ffc857,#ff3864);box-shadow:0 0 12px #ff3864;transition:width .1s}.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:22px;background:#050810b9;backdrop-filter:blur(9px)}.panel{width:min(100%,370px);border:1px solid #ffffff1b;border-radius:27px;padding:28px 23px;background:linear-gradient(145deg,#17243a,#0d1422);box-shadow:0 25px 80px #000b;text-align:center}.tag{font-size:10px;letter-spacing:4px;color:#8fffe0;font-weight:900}.title{font-size:48px;line-height:.9;letter-spacing:-3px;font-weight:1000;margin:13px 0}.title em{font-style:normal;color:#ff477e}.desc{font-size:13px;color:#aab7c9;line-height:1.55;margin:16px auto 22px;max-width:290px}button{border:0;border-radius:14px;padding:16px 18px;background:#8fffe0;color:#07151a;font-weight:1000;letter-spacing:1.5px;width:100%;font-size:13px}.secondary{margin-top:10px;background:#ffffff12;color:#d9e5f4;border:1px solid #ffffff20}.hidden{display:none!important}.bottom{position:absolute;bottom:calc(env(safe-area-inset-bottom) + 24px);left:0;right:0;text-align:center;color:#8d9db1;font-size:10px;letter-spacing:2px;font-weight:800;pointer-events:none}.stats{display:flex;justify-content:space-around;margin:18px 0;color:#a9b7ca;font-size:11px}.stats b{display:block;color:white;font-size:22px;margin-top:4px}.garage{display:flex;gap:8px;margin:18px 0}.garage button{padding:12px 5px;font-size:10px;letter-spacing:.3px;background:#ffffff12;color:#fff;border:1px solid #ffffff20}.garage button.selected{border-color:#8fffe0;color:#8fffe0}.tip{color:#718197;font-size:10px;margin-top:15px}
+</style></head><body><div id="app"><canvas id="game"></canvas>
+<div class="hud"><div class="top"><div class="logo">⚡ NEON HEIST</div><div><div class="score" id="score">0</div><div class="small">DISTANCA · METARA</div></div></div><div class="heat"><i id="heat"></i></div></div>
+<div class="bottom" id="bottom">DODIRNI LEVO ILI DESNO DA MENJAŠ TRAKU</div>
+<div class="overlay" id="menu"><div class="panel"><div class="tag">NOĆ JE TVOJA</div><div class="title">NEON<br><em>HEIST</em></div><p class="desc">Ukradi keš, izbegni saobraćaj i beži od policije. Što duže preživiš, potera je luđa.</p><div class="stats"><div>NAJBOLJE<b id="best">0 m</b></div><div>U SEFU<b id="bank">0 $</b></div></div><div class="garage" id="garage"><button data-car="0" class="selected">MINT<br>BASIC</button><button data-car="1">PINK<br>250 $</button><button data-car="2">GOLD<br>500 $</button></div><button id="start">POKRENI BEKSTVO</button><div class="tip">PREĐI PRSTOM LEVO/DESNO ILI DODIRNI STRANU EKRANA</div></div></div>
+<div class="overlay hidden" id="over"><div class="panel"><div class="tag">UHVAĆEN SI</div><div class="title">GAME<br><em>OVER</em></div><p class="desc" id="reason">Policija te je sustigla.</p><div class="stats"><div>REZULTAT<b id="final">0 m</b></div><div>OSVOJENO<b id="earned">0 $</b></div></div><button id="retry">JOŠ JEDAN KRUG</button><button class="secondary" id="home">GARAZA</button></div></div>
 </div>
 <script>
-(()=>{
-const canvas=document.getElementById('c'),ctx=canvas.getContext('2d'),game=document.getElementById('game');
-const scoreEl=document.getElementById('score'),bestEl=document.getElementById('best'),statusEl=document.getElementById('status'),hintEl=document.getElementById('touchhint');
-const startEl=document.getElementById('start'),overEl=document.getElementById('over');
-let W=0,H=0,dpr=1,state='ready',holding=false,score=0,best=+(localStorage.getItem('dontBlinkBest')||0),speed=210,last=0,spawn=0,items=[],particles=[],playerY=0,closed=false,sound=true,audio=null;
-bestEl.textContent=best;
-function resize(){const r=game.getBoundingClientRect();dpr=Math.min(devicePixelRatio||1,2);W=r.width;H=r.height;canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);playerY=H*.52}
-addEventListener('resize',resize);resize();
-function beep(f=440,d=.06){if(!sound)return;try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();const o=audio.createOscillator(),g=audio.createGain();o.frequency.value=f;o.type='sine';g.gain.value=.035;o.connect(g);g.connect(audio.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+d);o.stop(audio.currentTime+d)}catch(e){}}
-function reset(){score=0;speed=210;spawn=.8;items=[];particles=[];holding=false;closed=false;scoreEl.textContent='0';state='playing';startEl.classList.add('hidden');overEl.classList.add('hidden');statusEl.textContent='DRŽI DA TREPNEŠ';hintEl.textContent='DRŽI EKRAN DA ZATVORIŠ OKO';last=performance.now();requestAnimationFrame(loop)}
-function end(){state='over';holding=false;overEl.classList.remove('hidden');document.getElementById('final').textContent=score; if(score>best){best=score;localStorage.setItem('dontBlinkBest',best);bestEl.textContent=best;document.getElementById('record').textContent=best;document.getElementById('endtitle').innerHTML='NOVI<br><span>REKORD!</span>';beep(880,.18)}else{document.getElementById('record').textContent=best;document.getElementById('endtitle').innerHTML='DOBRO<br><span>ODIGRANO.</span>'}}
-function addItem(){const laser=Math.random()<.58;const y=H*.52+(Math.random()-.5)*Math.min(170,H*.25);items.push({x:W+35,y,type:laser?'laser':'star',w:laser?18:24,h:laser?Math.max(100,H*.22):24,passed:false,phase:Math.random()*6})}
-function burst(x,y,color){for(let i=0;i<12;i++){const a=Math.random()*Math.PI*2,v=35+Math.random()*130;particles.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:.55,max:.55,color})}}
-function loop(t){if(state!=='playing')return;const dt=Math.min((t-last)/1000,.035);last=t;update(dt);draw();requestAnimationFrame(loop)}
-function update(dt){speed=Math.min(420,210+score*3.4);spawn-=dt;if(spawn<=0){addItem();spawn=Math.max(.62,1.12-score*.008)}
-closed=holding;
-for(const it of items){it.x-=speed*dt;if(it.type==='star'){it.y+=Math.sin(performance.now()/350+it.phase)*14*dt;if(!it.passed&&it.x<W*.27+30&&it.x>W*.27-20){if(!closed){it.passed=true;score++;scoreEl.textContent=score;burst(it.x,it.y,'#ffd36a');beep(650,.04)}else if(it.x<W*.27)it.passed=true}}else{const px=W*.27,py=playerY;if(!it.passed&&it.x<px+22&&it.x+it.w>px-22){it.passed=true;if(!closed){end();return}else{score++;scoreEl.textContent=score;burst(px,py,'#64f5e5');beep(520,.04)}}}}
-items=items.filter(i=>i.x>-80&&!i.passed||i.x>-80&&i.type==='laser'&&i.passed);
-for(const p of particles){p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt}particles=particles.filter(p=>p.life>0);
-}
-function draw(){ctx.clearRect(0,0,W,H);
-const grd=ctx.createLinearGradient(0,0,0,H);grd.addColorStop(0,'#121b37');grd.addColorStop(1,'#080b17');ctx.fillStyle=grd;ctx.fillRect(0,0,W,H);
-ctx.strokeStyle='#8aa2ff10';ctx.lineWidth=1;for(let y=0;y<H;y+=42){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
-for(let i=0;i<36;i++){const x=(i*97+performance.now()*.008)%W,y=(i*173)%H;ctx.fillStyle='#b8c8ff33';ctx.fillRect(x,y,2,2)}
-const px=W*.27,py=playerY;
-for(const it of items){if(it.type==='laser'){ctx.save();ctx.shadowBlur=20;ctx.shadowColor='#ff557d';ctx.fillStyle='#ff557d';ctx.fillRect(it.x,it.y-it.h/2,it.w,it.h);ctx.fillStyle='#ffd1dc';ctx.fillRect(it.x+6,it.y-it.h/2,3,it.h);ctx.restore()}else if(!it.passed){ctx.save();ctx.translate(it.x,it.y);ctx.rotate(performance.now()*.0015);ctx.shadowBlur=18;ctx.shadowColor='#ffd36a';ctx.fillStyle='#ffd36a';ctx.beginPath();for(let k=0;k<10;k++){const a=-Math.PI/2+k*Math.PI/5,r=k%2?7:13;ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r)}ctx.closePath();ctx.fill();ctx.restore()}}
-for(const p of particles){ctx.globalAlpha=Math.max(0,p.life/p.max);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,3,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1}
-ctx.save();ctx.translate(px,py);ctx.shadowBlur=25;ctx.shadowColor=closed?'#64f5e5':'#91aaff';ctx.fillStyle='#eaf5ff';ctx.beginPath();ctx.ellipse(0,0,27,20,0,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
-if(closed){ctx.strokeStyle='#14213b';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(-15,0);ctx.quadraticCurveTo(0,8,15,0);ctx.stroke()}else{ctx.fillStyle='#182746';ctx.beginPath();ctx.ellipse(0,0,10,14,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#64f5e5';ctx.beginPath();ctx.arc(3,-3,4,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(4,-5,1.7,0,Math.PI*2);ctx.fill()}
-ctx.restore();
-ctx.fillStyle='#ffffff10';ctx.fillRect(px-1,0,2,H);
-if(state==='playing'){statusEl.textContent=closed?'OKO ZATVORENO':'OKO OTVORENO';statusEl.style.color=closed?'#64f5e5':'#a9b5d8';hintEl.textContent=closed?'PUSTI DA POKUPIŠ ZVEZDU':'DRŽI DA PROĐEŠ KROZ LASER'}
-}
-function down(e){if(state!=='playing')return;e.preventDefault();holding=true;beep(300,.025)}
-function up(e){e.preventDefault();holding=false}
-canvas.addEventListener('pointerdown',down);addEventListener('pointerup',up);addEventListener('pointercancel',up);
-document.getElementById('play').onclick=reset;document.getElementById('again').onclick=reset;
-document.getElementById('sound').onclick=()=>{sound=!sound;document.getElementById('sound').textContent=sound?'♫':'♪'};
-addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();holding=true}if(e.code==='Enter'&&state!=='playing')reset()});
-addEventListener('keyup',e=>{if(e.code==='Space')holding=false});
-document.addEventListener('visibilitychange',()=>{if(document.hidden)holding=false});
-draw();
+(()=>{const c=document.getElementById('game'),x=c.getContext('2d'),app=document.getElementById('app');let W,H,D=1,last=0,state='menu',lane=1,target=1,road=0,dist=0,cash=0,heat=0,speed=340,spawn=0,objects=[],particles=[],shake=0,boost=0,car=0,bank=+(localStorage.nhBank||0),best=+(localStorage.nhBest||0),owned=JSON.parse(localStorage.nhCars||'[true,false,false]'),audio=null;
+const $=id=>document.getElementById(id);$('best').textContent=best+' m';$('bank').textContent=bank+' $';
+function resize(){const r=app.getBoundingClientRect();D=Math.min(devicePixelRatio||1,2);W=r.width;H=r.height;c.width=W*D;c.height=H*D;x.setTransform(D,0,0,D,0,0)}addEventListener('resize',resize);resize();
+function beep(f=500,d=.07){try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();let o=audio.createOscillator(),g=audio.createGain();o.frequency.value=f;g.gain.value=.035;o.connect(g);g.connect(audio.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+d);o.stop(audio.currentTime+d)}catch(e){}}
+function roadX(i){return W*.5+(i-1)*Math.min(W*.245,112)}
+function carDraw(cx,cy,color,scale=1,police=false){x.save();x.translate(cx,cy);x.scale(scale,scale);x.shadowBlur=18;x.shadowColor=color;x.fillStyle=color;x.beginPath();x.roundRect(-18,-31,36,62,10);x.fill();x.shadowBlur=0;x.fillStyle='#111b2a';x.beginPath();x.roundRect(-12,-19,24,22,6);x.fill();x.fillStyle='#d8f5ff';x.fillRect(-13,-27,7,4);x.fillRect(6,-27,7,4);x.fillStyle='#ff385e';x.fillRect(-13,23,7,4);x.fillRect(6,23,7,4);if(police){x.fillStyle='#ff365e';x.fillRect(-14,-7,12,5);x.fillStyle='#55baff';x.fillRect(2,-7,12,5)}x.restore()}
+function start(){state='play';lane=target=1;dist=cash=heat=0;speed=340;spawn=.55;objects=[];particles=[];boost=0;last=performance.now();$('menu').classList.add('hidden');$('over').classList.add('hidden');requestAnimationFrame(loop)}
+function end(why){if(state!=='play')return;state='over';let earned=cash+Math.floor(dist/35);bank+=earned;localStorage.nhBank=bank;best=Math.max(best,Math.floor(dist));localStorage.nhBest=best;$('best').textContent=best+' m';$('bank').textContent=bank+' $';$('final').textContent=Math.floor(dist)+' m';$('earned').textContent=earned+' $';$('reason').textContent=why;$('over').classList.remove('hidden');beep(110,.3)}
+function spawnObj(){let r=Math.random(),ln=Math.floor(Math.random()*3);if(r<.54)objects.push({type:'traffic',lane:ln,y:-65,color:['#ff477e','#a78bfa','#f5a742','#47b7ff'][Math.floor(Math.random()*4)],v:.8+Math.random()*.25});else if(r<.88)objects.push({type:'cash',lane:ln,y:-30,phase:Math.random()*5});else objects.push({type:'nitro',lane:ln,y:-30,phase:Math.random()*5})}
+function burst(cx,cy,color){for(let i=0;i<13;i++){let a=Math.random()*6.28,v=60+Math.random()*180;particles.push({x:cx,y:cy,vx:Math.cos(a)*v,vy:Math.sin(a)*v,t:.5,color})}}
+function move(n){if(state!=='play')return;target=Math.max(0,Math.min(2,target+n));beep(330,.025)}
+function update(dt){dist+=dt*(boost>0?speed*1.65:speed)*.075;speed=Math.min(620,340+dist*.11);road+=dt*speed;heat=Math.min(100,heat+dt*(2.7+dist*.003));if(boost>0)boost-=dt;spawn-=dt;if(spawn<=0){spawnObj();spawn=Math.max(.42,.9-dist/2200)}lane+=(target-lane)*Math.min(1,dt*13);
+let py=H*.79;for(let o of objects){o.y+=speed*o.v*dt;if(o.type==='traffic'&&Math.abs(o.y-py)<48&&Math.abs(roadX(o.lane)-roadX(lane))<30){end('Sudario si se saobraćajnim automobilom. Probaj da menjaš traku ranije.');return}if(o.type!=='traffic'&&!o.got&&Math.abs(o.y-py)<38&&Math.abs(o.lane-lane)<.34){o.got=true;if(o.type==='cash'){cash+=25;burst(roadX(o.lane),o.y,'#ffd166');beep(850,.045)}else{boost=3.2;heat=Math.max(0,heat-16);burst(roadX(o.lane),o.y,'#8fffe0');beep(980,.1)}}}objects=objects.filter(o=>o.y<H+100&&!o.got);for(let p of particles){p.x+=p.vx*dt;p.y+=p.vy*dt;p.t-=dt}particles=particles.filter(p=>p.t>0);if(heat>=100){end('Policija te je sustigla. Pokupi nitro da usporiš poteru!');return}if(Math.floor(dist)%10===0)$('score').textContent=Math.floor(dist);$('heat').style.width=heat+'%';}
+function draw(){x.clearRect(0,0,W,H);let bg=x.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#101b2c');bg.addColorStop(1,'#070b12');x.fillStyle=bg;x.fillRect(0,0,W,H);
+// city silhouettes
+for(let i=0;i<12;i++){let bx=i*W/10-(road*.16%(W/10)),bh=70+(i*47%120);x.fillStyle='#111d2c';x.fillRect(bx,100,W/12,bh);for(let yy=112;yy<100+bh-8;yy+=17)for(let xx=bx+8;xx<bx+W/12-5;xx+=13){x.fillStyle='#8fffe022';x.fillRect(xx,yy,4,5)}}
+let rw=Math.min(W*.76,340),left=(W-rw)/2;x.fillStyle='#171f2b';x.fillRect(left,0,rw,H);x.fillStyle='#222d3a';x.fillRect(left-5,0,5,H);x.fillRect(left+rw,0,5,H);x.strokeStyle='#d5e5ee44';x.lineWidth=3;for(let i=1;i<3;i++){x.setLineDash([28,28]);x.lineDashOffset=-(road%56);x.beginPath();x.moveTo(left+rw*i/3,0);x.lineTo(left+rw*i/3,H);x.stroke()}x.setLineDash([]);
+for(let o of objects){let cx=roadX(o.lane);if(o.type==='traffic')carDraw(cx,o.y,o.color,.9);else{x.save();x.translate(cx,o.y);x.rotate(road*.001);x.shadowBlur=18;x.shadowColor=o.type==='cash'?'#ffd166':'#8fffe0';x.fillStyle=o.type==='cash'?'#ffd166':'#8fffe0';if(o.type==='cash'){x.beginPath();x.roundRect(-13,-13,26,26,6);x.fill();x.fillStyle='#6b4a00';x.font='bold 17px sans-serif';x.textAlign='center';x.fillText('$',0,6)}else{x.beginPath();x.moveTo(0,-18);x.lineTo(13,-2);x.lineTo(4,-2);x.lineTo(10,16);x.lineTo(-12,-5);x.lineTo(-3,-5);x.closePath();x.fill()}x.restore()}}
+carDraw(roadX(lane),H*.79,car===1?'#ff477e':car===2?'#ffd166':'#8fffe0',1.08);
+for(let p of particles){x.globalAlpha=Math.max(0,p.t*2);x.fillStyle=p.color;x.beginPath();x.arc(p.x,p.y,3,0,6.28);x.fill();x.globalAlpha=1}
+if(boost>0){x.fillStyle='#8fffe022';x.fillRect(0,0,W,H);x.fillStyle='#8fffe0';x.font='900 12px sans-serif';x.textAlign='center';x.fillText('NITRO AKTIVAN',W/2,H*.22)}
+// pursuit car approaching in rear view indicator
+if(heat>30){x.fillStyle='#ff477e';x.globalAlpha=.25+heat/250;x.font='900 11px sans-serif';x.textAlign='center';x.fillText('🚨 POTERA',W/2,H*.12);x.globalAlpha=1}}
+function loop(t){if(state!=='play')return;let dt=Math.min(.035,(t-last)/1000);last=t;update(dt);if(state==='play'){draw();requestAnimationFrame(loop)}}
+function pointerDown(e){if(state!=='play')return;let r=app.getBoundingClientRect(),px=e.clientX-r.left;move(px<W/2?-1:1)}let sx=0,sy=0;c.addEventListener('pointerdown',e=>{sx=e.clientX;sy=e.clientY});c.addEventListener('pointerup',e=>{if(state!=='play')return;let dx=e.clientX-sx;if(Math.abs(dx)>24)move(dx<0?-1:1);else pointerDown(e)});
+addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='a')move(-1);if(e.key==='ArrowRight'||e.key==='d')move(1);if(e.key===' '&&state!=='play')start()});
+function garage(){document.querySelectorAll('#garage button').forEach(b=>{let n=+b.dataset.car;b.classList.toggle('selected',n===car);b.onclick=()=>{if(!owned[n]){let cost=n===1?250:500;if(bank<cost){beep(100,.1);return}bank-=cost;owned[n]=true;localStorage.nhBank=bank;localStorage.nhCars=JSON.stringify(owned);$('bank').textContent=bank+' $'}car=n;garage();beep(700,.05)}})}garage();
+$('start').onclick=start;$('retry').onclick=start;$('home').onclick=()=>{$('over').classList.add('hidden');$('menu').classList.remove('hidden');state='menu';garage()};draw();
 })();
-</script>
-</body></html>
+</script></body></html>
