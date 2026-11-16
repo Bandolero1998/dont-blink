@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="sr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#090b16">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DON'T BLINK">
+<title>DON'T BLINK</title>
+<style>
+:root{color-scheme:dark;--bg:#090b16;--panel:#13172a;--cyan:#64f5e5;--pink:#ff557d;--gold:#ffd36a}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:Inter,system-ui,-apple-system,sans-serif;touch-action:none;color:#fff}
+body{display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 30%,#1a2140 0%,#090b16 68%)}
+#game{position:relative;width:100%;height:100%;max-width:520px;max-height:940px;overflow:hidden;background:linear-gradient(180deg,#111831,#090b16);isolation:isolate}
+canvas{width:100%;height:100%;display:block;touch-action:none}
+.hud{position:absolute;inset:0;pointer-events:none;padding:calc(env(safe-area-inset-top) + 18px) 20px calc(env(safe-area-inset-bottom) + 18px)}
+.top{display:flex;justify-content:space-between;align-items:flex-start}.brand{font-size:12px;letter-spacing:4px;color:#a7b2d7;font-weight:800}.score{font-size:38px;font-weight:900;line-height:1.1;text-align:right;text-shadow:0 0 24px #64f5e555}.best{font-size:11px;color:#9da8c8;letter-spacing:1px;text-align:right;margin-top:4px}
+.status{position:absolute;top:22%;left:0;right:0;text-align:center;font-size:12px;letter-spacing:3px;color:#a9b5d8;font-weight:800}
+.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:28px;background:#070914a8;backdrop-filter:blur(8px)}
+.panel{width:min(100%,360px);padding:30px 24px;border:1px solid #ffffff20;border-radius:28px;background:linear-gradient(145deg,#1b2340f2,#101426f5);box-shadow:0 24px 80px #0009;text-align:center}
+.eyebrow{font-size:10px;letter-spacing:4px;color:var(--cyan);font-weight:900}.title{font-size:43px;line-height:.95;letter-spacing:-2px;font-weight:1000;margin:14px 0 12px}.title span{color:var(--cyan)}.desc{color:#aeb8d5;font-size:14px;line-height:1.55;margin:0 auto 24px;max-width:270px}
+button{border:0;border-radius:16px;background:var(--cyan);color:#08111b;font-weight:1000;letter-spacing:1.5px;font-size:14px;padding:17px 24px;width:100%;cursor:pointer;box-shadow:0 8px 30px #64f5e533}
+.hint{font-size:11px;color:#7e89aa;margin-top:17px;line-height:1.5}
+.hidden{display:none!important}.touchhint{position:absolute;bottom:calc(env(safe-area-inset-bottom) + 34px);left:0;right:0;text-align:center;color:#8794b9;font-size:11px;letter-spacing:2px;font-weight:800;pointer-events:none}
+#sound{position:absolute;right:18px;top:calc(env(safe-area-inset-top) + 70px);pointer-events:auto;width:42px;height:42px;border-radius:50%;padding:0;background:#ffffff12;color:#dce6ff;border:1px solid #ffffff20;font-size:17px;box-shadow:none}
+</style>
+</head>
+<body>
+<div id="game">
+<canvas id="c"></canvas>
+<div class="hud"><div class="top"><div class="brand">ARCADE / 001</div><div><div class="score" id="score">0</div><div class="best">BEST <span id="best">0</span></div></div></div></div>
+<button id="sound" aria-label="Zvuk">♫</button>
+<div class="status" id="status">DRŽI DA TREPNEŠ</div>
+<div class="touchhint" id="touchhint">DRŽI EKRAN DA ZATVORIŠ OKO</div>
+<div class="overlay" id="start">
+<div class="panel"><div class="eyebrow">JEDAN PRST. JEDNA ŠANSA.</div><div class="title">DON'T<br><span>BLINK.</span></div><p class="desc">Drži prst da zatvoriš oko i prođeš kroz crvene lasere. Pusti da otvoriš oko i pokupiš zvezde. Koliko daleko možeš?</p><button id="play">IGRAJ</button><div class="hint">Igra radi offline · Rekord se čuva na ovom uređaju</div></div>
+</div>
+<div class="overlay hidden" id="over">
+<div class="panel"><div class="eyebrow">KRAJ RUNDE</div><div class="title" id="endtitle">DOBRO<br><span>ODIGRANO.</span></div><p class="desc">Tvoj rezultat: <b id="final">0</b><br>Najbolji rezultat: <b id="record">0</b></p><button id="again">IGRAJ PONOVO</button><div class="hint">Pokušaj ponovo — možeš bolje.</div></div>
+</div>
+</div>
+<script>
+(()=>{
+const canvas=document.getElementById('c'),ctx=canvas.getContext('2d'),game=document.getElementById('game');
+const scoreEl=document.getElementById('score'),bestEl=document.getElementById('best'),statusEl=document.getElementById('status'),hintEl=document.getElementById('touchhint');
+const startEl=document.getElementById('start'),overEl=document.getElementById('over');
+let W=0,H=0,dpr=1,state='ready',holding=false,score=0,best=+(localStorage.getItem('dontBlinkBest')||0),speed=210,last=0,spawn=0,items=[],particles=[],playerY=0,closed=false,sound=true,audio=null;
+bestEl.textContent=best;
+function resize(){const r=game.getBoundingClientRect();dpr=Math.min(devicePixelRatio||1,2);W=r.width;H=r.height;canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);playerY=H*.52}
+addEventListener('resize',resize);resize();
+function beep(f=440,d=.06){if(!sound)return;try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();const o=audio.createOscillator(),g=audio.createGain();o.frequency.value=f;o.type='sine';g.gain.value=.035;o.connect(g);g.connect(audio.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+d);o.stop(audio.currentTime+d)}catch(e){}}
+function reset(){score=0;speed=210;spawn=.8;items=[];particles=[];holding=false;closed=false;scoreEl.textContent='0';state='playing';startEl.classList.add('hidden');overEl.classList.add('hidden');statusEl.textContent='DRŽI DA TREPNEŠ';hintEl.textContent='DRŽI EKRAN DA ZATVORIŠ OKO';last=performance.now();requestAnimationFrame(loop)}
+function end(){state='over';holding=false;overEl.classList.remove('hidden');document.getElementById('final').textContent=score; if(score>best){best=score;localStorage.setItem('dontBlinkBest',best);bestEl.textContent=best;document.getElementById('record').textContent=best;document.getElementById('endtitle').innerHTML='NOVI<br><span>REKORD!</span>';beep(880,.18)}else{document.getElementById('record').textContent=best;document.getElementById('endtitle').innerHTML='DOBRO<br><span>ODIGRANO.</span>'}}
+function addItem(){const laser=Math.random()<.58;const y=H*.52+(Math.random()-.5)*Math.min(170,H*.25);items.push({x:W+35,y,type:laser?'laser':'star',w:laser?18:24,h:laser?Math.max(100,H*.22):24,passed:false,phase:Math.random()*6})}
+function burst(x,y,color){for(let i=0;i<12;i++){const a=Math.random()*Math.PI*2,v=35+Math.random()*130;particles.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:.55,max:.55,color})}}
+function loop(t){if(state!=='playing')return;const dt=Math.min((t-last)/1000,.035);last=t;update(dt);draw();requestAnimationFrame(loop)}
+function update(dt){speed=Math.min(420,210+score*3.4);spawn-=dt;if(spawn<=0){addItem();spawn=Math.max(.62,1.12-score*.008)}
+closed=holding;
+for(const it of items){it.x-=speed*dt;if(it.type==='star'){it.y+=Math.sin(performance.now()/350+it.phase)*14*dt;if(!it.passed&&it.x<W*.27+30&&it.x>W*.27-20){if(!closed){it.passed=true;score++;scoreEl.textContent=score;burst(it.x,it.y,'#ffd36a');beep(650,.04)}else if(it.x<W*.27)it.passed=true}}else{const px=W*.27,py=playerY;if(!it.passed&&it.x<px+22&&it.x+it.w>px-22){it.passed=true;if(!closed){end();return}else{score++;scoreEl.textContent=score;burst(px,py,'#64f5e5');beep(520,.04)}}}}
+items=items.filter(i=>i.x>-80&&!i.passed||i.x>-80&&i.type==='laser'&&i.passed);
+for(const p of particles){p.x+=p.vx*dt;p.y+=p.vy*dt;p.life-=dt}particles=particles.filter(p=>p.life>0);
+}
+function draw(){ctx.clearRect(0,0,W,H);
+const grd=ctx.createLinearGradient(0,0,0,H);grd.addColorStop(0,'#121b37');grd.addColorStop(1,'#080b17');ctx.fillStyle=grd;ctx.fillRect(0,0,W,H);
+ctx.strokeStyle='#8aa2ff10';ctx.lineWidth=1;for(let y=0;y<H;y+=42){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
+for(let i=0;i<36;i++){const x=(i*97+performance.now()*.008)%W,y=(i*173)%H;ctx.fillStyle='#b8c8ff33';ctx.fillRect(x,y,2,2)}
+const px=W*.27,py=playerY;
+for(const it of items){if(it.type==='laser'){ctx.save();ctx.shadowBlur=20;ctx.shadowColor='#ff557d';ctx.fillStyle='#ff557d';ctx.fillRect(it.x,it.y-it.h/2,it.w,it.h);ctx.fillStyle='#ffd1dc';ctx.fillRect(it.x+6,it.y-it.h/2,3,it.h);ctx.restore()}else if(!it.passed){ctx.save();ctx.translate(it.x,it.y);ctx.rotate(performance.now()*.0015);ctx.shadowBlur=18;ctx.shadowColor='#ffd36a';ctx.fillStyle='#ffd36a';ctx.beginPath();for(let k=0;k<10;k++){const a=-Math.PI/2+k*Math.PI/5,r=k%2?7:13;ctx.lineTo(Math.cos(a)*r,Math.sin(a)*r)}ctx.closePath();ctx.fill();ctx.restore()}}
+for(const p of particles){ctx.globalAlpha=Math.max(0,p.life/p.max);ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,3,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1}
+ctx.save();ctx.translate(px,py);ctx.shadowBlur=25;ctx.shadowColor=closed?'#64f5e5':'#91aaff';ctx.fillStyle='#eaf5ff';ctx.beginPath();ctx.ellipse(0,0,27,20,0,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+if(closed){ctx.strokeStyle='#14213b';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(-15,0);ctx.quadraticCurveTo(0,8,15,0);ctx.stroke()}else{ctx.fillStyle='#182746';ctx.beginPath();ctx.ellipse(0,0,10,14,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#64f5e5';ctx.beginPath();ctx.arc(3,-3,4,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(4,-5,1.7,0,Math.PI*2);ctx.fill()}
+ctx.restore();
+ctx.fillStyle='#ffffff10';ctx.fillRect(px-1,0,2,H);
+if(state==='playing'){statusEl.textContent=closed?'OKO ZATVORENO':'OKO OTVORENO';statusEl.style.color=closed?'#64f5e5':'#a9b5d8';hintEl.textContent=closed?'PUSTI DA POKUPIŠ ZVEZDU':'DRŽI DA PROĐEŠ KROZ LASER'}
+}
+function down(e){if(state!=='playing')return;e.preventDefault();holding=true;beep(300,.025)}
+function up(e){e.preventDefault();holding=false}
+canvas.addEventListener('pointerdown',down);addEventListener('pointerup',up);addEventListener('pointercancel',up);
+document.getElementById('play').onclick=reset;document.getElementById('again').onclick=reset;
+document.getElementById('sound').onclick=()=>{sound=!sound;document.getElementById('sound').textContent=sound?'♫':'♪'};
+addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();holding=true}if(e.code==='Enter'&&state!=='playing')reset()});
+addEventListener('keyup',e=>{if(e.code==='Space')holding=false});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)holding=false});
+draw();
+})();
+</script>
+</body></html>
